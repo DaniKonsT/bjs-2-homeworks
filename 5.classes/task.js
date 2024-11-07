@@ -27,37 +27,37 @@ class PrintEditionItem {
 }
 
 class Magazine extends PrintEditionItem {
-    constructor(type, name, releaseDate, pagesCount) {
-        super(type, name, releaseDate, pagesCount);
+    constructor(name, releaseDate, pagesCount) {
+        super(name, releaseDate, pagesCount);
         this.type = "magazine";
     }
 }
 
 class Book extends PrintEditionItem {
-    constructor(author, type, releaseDate, pagesCount) {
-        super(type, releaseDate, pagesCount);
+    constructor(author, name, releaseDate, pagesCount) {
+        super(name, releaseDate, pagesCount);
         this.author = author;
         this.type = "book";
     }
 }
 
 class NovelBook extends Book {
-    constructor(author, type, releaseDate, pagesCount) {
-        super(author, type, releaseDate, pagesCount);
+    constructor(author, name, releaseDate, pagesCount) {
+        super(author, name, releaseDate, pagesCount);
         this.type = "novel";
     }
 }
 
 class FantasticBook extends Book {
-    constructor(author, type, releaseDate, pagesCount) {
-        super(author, type, releaseDate, pagesCount);
+    constructor(author, name, releaseDate, pagesCount) {
+        super(author, name, releaseDate, pagesCount);
         this.type = "fantastic";
     }
 }
 
 class DetectiveBook extends Book {
-    constructor(author, type, releaseDate, pagesCount) {
-        super(author, type, releaseDate, pagesCount);
+    constructor(author, name, releaseDate, pagesCount) {
+        super(author, name, releaseDate, pagesCount);
         this.type = "detective";
     }
 }
@@ -99,57 +99,51 @@ class Library {
 
 
 class Student {
-    constructor(name) {
-        this.name = name;
-        this.journal = {};
+  constructor(name) {
+    this.name = name;
+    this.marks = {};
+  }
+  addMark(mark, subject) {
+    if (this.marks?.[subject] === undefined && mark >= 2 && mark <= 5) {
+      this.marks[subject] = [];
+      this.marks[subject].push(mark);
+    } else if (this.marks.hasOwnProperty(subject) && mark >= 2 && mark <= 5) {
+      this.marks[subject].push(mark);
     }
+  }
 
-    setSubject(subjectName) {
-        if (this.journal.hasOwnProperty(subjectName) === true) {
-            return console.log('Предмет уже существует.');
-        }
-        else {
-            this.journal[subjectName] = [];
-        }
+  getAverageBySubject(subject) {
+    if (this.marks.hasOwnProperty(subject) === false) {
+      return 0;
     }
-    
-    addMark(mark, subjectName) {
-        if (this.journal.hasOwnProperty(subjectName) !== true) {
-            this.journal[subjectName] = [];
-            console.log('Несуществующий предмет. Предмет создан.');
+    const gradePointAverage = this.marks[subject].reduce(
+      (acc, mark, index, arr) => {
+        acc += mark;
+        if (index === arr.length - 1) {
+          return acc / arr.length;
         }
-        if ((typeof mark === 'number') && (mark >= 1) && (mark <= 5)) {
-            this.journal[subjectName].push(mark);
-        }
-        else {
-            return console.log('Ошибка, оценка должна быть числом от 1 до 5');
-        }
+        return acc;
+      },
+      0
+    );
+    return gradePointAverage;
+  }
+  getAverage() {
+    if (Object.keys(this.marks).length === 0) {
+      return 0;
     }
-
-    getAverageBySubject(subjectName) {
-        if (this.journal.hasOwnProperty(subjectName) === true) {
-            let sum = 0;
-            let marks = this.journal[subjectName];
-            marks.forEach((item) => sum += item);
-            let averageBySubject = sum / marks.length;
-            return averageBySubject;
-        } else {
-            return console.log('Несуществующий предмет.');
-        }
+    let allSubject = Object.keys(this.marks);
+    for (let subject of allSubject) {
+      allSubject[allSubject.indexOf(subject)] =
+        this.getAverageBySubject(subject);
     }
-
-    getAverage() {
-        let sum = 0;
-        let marks = Object.values(this.journal);
-        let resultMarks = [];
-        marks.forEach((item) => resultMarks = [].concat(resultMarks, item));
-        resultMarks.forEach((item) => sum += item);
-        let average = sum / resultMarks.length;
-        return average;
-    }
-
-    exclude(reason) {
-        delete this.journal;
-        this.excluded = reason;
-    }
+    const gradePointAverage = allSubject.reduce((acc, mark, index, arr) => {
+      acc += mark;
+      if (index === arr.length - 1) {
+        return acc / arr.length;
+      }
+      return acc;
+    }, 0);
+    return gradePointAverage;
+  }
 }
